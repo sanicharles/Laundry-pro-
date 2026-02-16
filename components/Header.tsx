@@ -44,9 +44,9 @@ export const Header: React.FC = () => {
   };
 
   const navLinks = [
-    { name: 'Layanan', href: '#services', icon: <Info className="w-4 h-4" />, color: 'blue' },
-    { name: 'Scan Noda', href: '#stain-scanner', highlight: true, icon: <Camera className="w-4 h-4" />, color: 'orange' },
-    { name: 'Tanya Tini', href: '#ai-assistant', icon: <MessageSquare className="w-4 h-4" />, color: 'green' },
+    { name: 'Layanan', href: '#services', icon: <Info className="w-5 h-5" />, color: 'blue' },
+    { name: 'Scan Noda', href: '#stain-scanner', highlight: true, icon: <Camera className="w-5 h-5" />, color: 'orange' },
+    { name: 'Tanya Tini', href: '#ai-assistant', icon: <MessageSquare className="w-5 h-5" />, color: 'green' },
   ];
 
   const waOrderUrl = getWhatsAppUrl('Halo Laundry Ibu Tini, saya ingin pesan layanan laundry.');
@@ -68,22 +68,22 @@ export const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex space-x-1 items-center bg-gray-50/50 p-1 rounded-2xl border border-gray-100/50">
+          {/* Desktop Navigation - Icon Only */}
+          <nav className="hidden lg:flex space-x-2 items-center bg-gray-50/50 p-1 rounded-2xl border border-gray-100/50">
             {navLinks.map((link) => (
               <a 
                 key={link.name}
                 href={link.href} 
-                className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${
+                title={link.name}
+                className={`flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
                   link.highlight 
-                  ? 'text-orange-700 bg-orange-50 hover:bg-orange-100' 
+                  ? 'text-orange-700 bg-orange-50 hover:bg-orange-100 shadow-sm' 
                   : link.color === 'blue' 
                     ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50/50'
                     : 'text-gray-600 hover:text-green-600 hover:bg-white'
                 }`}
               >
                 {link.icon}
-                {link.name}
               </a>
             ))}
           </nav>
@@ -154,33 +154,32 @@ export const Header: React.FC = () => {
               </button>
             </div>
 
-            <nav className="flex flex-col gap-3 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-2">Eksplorasi</p>
+            <nav className="flex flex-col gap-4 flex-1 overflow-y-auto pr-2 custom-scrollbar">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-2">Menu Navigasi</p>
               
-              {navLinks.map((link) => (
-                <a 
-                  key={link.name}
-                  href={link.href} 
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center justify-between p-5 rounded-2xl transition-all duration-300 ${
-                    link.highlight 
-                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-100 scale-[1.02]' 
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${link.highlight ? 'bg-white/20' : 'bg-white border border-gray-100 shadow-sm'}`}>
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                {navLinks.map((link) => (
+                  <a 
+                    key={link.name}
+                    href={link.href} 
+                    onClick={() => setIsOpen(false)}
+                    title={link.name}
+                    className={`flex flex-col items-center justify-center p-6 rounded-3xl transition-all duration-300 ${
+                      link.highlight 
+                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-100' 
+                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center justify-center">
                       {link.icon}
                     </div>
-                    <span className="font-bold text-lg">{link.name}</span>
-                  </div>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${link.highlight ? 'bg-white/20' : 'bg-gray-200/50'}`}>→</div>
-                </a>
-              ))}
+                  </a>
+                ))}
+              </div>
               
               <div className="h-px bg-gray-100 my-4 mx-2"></div>
               
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-2">Transaksi</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-2">Layanan Cepat</p>
 
               <a 
                 href={waOrderUrl}
