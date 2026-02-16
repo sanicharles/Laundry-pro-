@@ -1,0 +1,7 @@
+{
+  "name": "Laundry Ibu Tini Pro",
+  "description": "A modern, professional laundry service application featuring an AI-powered stain removal assistant, a price calculator, and comprehensive service management.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
