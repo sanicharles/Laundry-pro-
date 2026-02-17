@@ -8,8 +8,12 @@ const STORAGE_KEYS = {
 };
 
 const getInitialConfig = () => {
-  const url = process.env.SUPABASE_URL || localStorage.getItem(STORAGE_KEYS.URL);
-  const key = process.env.SUPABASE_ANON_KEY || localStorage.getItem(STORAGE_KEYS.KEY);
+  // Use optional chaining and nullish coalescing for safe access
+  const envUrl = typeof process !== 'undefined' ? process.env?.SUPABASE_URL : null;
+  const envKey = typeof process !== 'undefined' ? process.env?.SUPABASE_ANON_KEY : null;
+  
+  const url = envUrl || localStorage.getItem(STORAGE_KEYS.URL);
+  const key = envKey || localStorage.getItem(STORAGE_KEYS.KEY);
   return { url, key };
 };
 

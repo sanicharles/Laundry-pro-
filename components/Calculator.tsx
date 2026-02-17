@@ -12,7 +12,7 @@ import {
   Search,
   Filter
 } from 'lucide-react';
-import { SERVICES, getWhatsAppUrl } from '../constants';
+import { SERVICES, getWhatsAppUrl, WHATSAPP_PHONE } from '../constants';
 
 export const Calculator: React.FC = () => {
   const [items, setItems] = useState<Record<string, number>>({});
@@ -62,8 +62,8 @@ export const Calculator: React.FC = () => {
       })
       .join('\n');
 
-    const message = `*ESTIMASI ORDER LAUNDRY IBU TINI*%0A%0A${serviceList}%0A%0A--------------------------------%0A*TOTAL ESTIMASI: Rp ${totals.total.toLocaleString()}*%0A--------------------------------%0A%0AMohon konfirmasi pengambilan kurir.`;
-    window.open(`https://wa.me/6285695014434?text=${message}`, '_blank');
+    const rawMessage = `*ESTIMASI ORDER LAUNDRY IBU TINI*\n\n${serviceList}\n\n--------------------------------\n*TOTAL ESTIMASI: Rp ${totals.total.toLocaleString()}*\n--------------------------------\n\nMohon konfirmasi pengambilan kurir.`;
+    window.open(getWhatsAppUrl(rawMessage), '_blank');
   };
 
   return (
