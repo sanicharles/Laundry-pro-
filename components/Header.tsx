@@ -6,11 +6,40 @@ import { getWhatsAppUrl } from '../constants';
 export const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>('');
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    // Intersection Observer to detect active section
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const sections = ['services', 'stain-scanner', 'ai-assistant'];
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -19,9 +48,6 @@ export const Header: React.FC = () => {
     } else {
       document.body.style.overflow = 'unset';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [isOpen]);
 
   const handleShare = async () => {
@@ -44,9 +70,9 @@ export const Header: React.FC = () => {
   };
 
   const navLinks = [
-    { name: 'Layanan', href: '#services', icon: <Info className="w-5 h-5" />, color: 'blue' },
-    { name: 'Scan Noda', href: '#stain-scanner', highlight: true, icon: <Camera className="w-5 h-5" />, color: 'orange' },
-    { name: 'Tanya Tini', href: '#ai-assistant', icon: <MessageSquare className="w-5 h-5" />, color: 'green' },
+    { id: 'services', name: 'Layanan', href: '#services', icon: <Info className="w-5 h-5" />, color: 'blue' },
+    { id: 'stain-scanner', name: 'Scan Noda', href: '#stain-scanner', highlight: true, icon: <Camera className="w-5 h-5" />, color: 'orange' },
+    { id: 'ai-assistant', name: 'Tanya Tini', href: '#ai-assistant', icon: <MessageSquare className="w-5 h-5" />, color: 'green' },
   ];
 
   const waOrderUrl = getWhatsAppUrl('Halo Laundry Ibu Tini, saya ingin pesan layanan laundry.');
@@ -68,31 +94,37 @@ export const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Navigation - Icon Only */}
-          <nav className="hidden lg:flex space-x-2 items-center bg-gray-50/50 p-1 rounded-2xl border border-gray-100/50">
-            {navLinks.map((link) => (
-              <a 
-                key={link.name}
-                href={link.href} 
-                title={link.name}
-                className={`flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
-                  link.highlight 
-                  ? 'text-orange-700 bg-orange-50 hover:bg-orange-100 shadow-sm' 
-                  : link.color === 'blue' 
-                    ? 'text-blue-600 hover:text-blue-700 hover:bg-blue-50/50'
-                    : 'text-gray-600 hover:text-green-600 hover:bg-white'
-                }`}
-              >
-                {link.icon}
-              </a>
-            ))}
+          {/* Desktop Navigation - Icon Only with Active State */}
+          <nav className="hidden lg:flex space-x-3 items-center bg-gray-50/80 p-1.5 rounded-2xl border border-gray-100/50 backdrop-blur-md">
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.id;
+              return (
+                <a 
+                  key={link.id}
+                  href={link.href} 
+                  title={link.name}
+                  className={`relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 transform active:scale-90 ${
+                    isActive
+                      ? link.color === 'orange' ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' :
+                        link.color === 'blue' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' :
+                        'bg-green-600 text-white shadow-lg shadow-green-200'
+                      : 'text-gray-400 hover:text-gray-900 hover:bg-white'
+                  }`}
+                >
+                  {link.icon}
+                  {isActive && (
+                    <span className="absolute -bottom-1.5 w-1 h-1 bg-current rounded-full animate-pulse"></span>
+                  )}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
             <button 
               onClick={handleShare}
-              className="hidden sm:flex p-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-90"
+              className="hidden sm:flex p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-90"
               title="Bagikan Aplikasi"
             >
               <Share2 className="w-5 h-5" />
@@ -158,23 +190,31 @@ export const Header: React.FC = () => {
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 px-2">Menu Navigasi</p>
               
               <div className="grid grid-cols-3 gap-4 mb-4">
-                {navLinks.map((link) => (
-                  <a 
-                    key={link.name}
-                    href={link.href} 
-                    onClick={() => setIsOpen(false)}
-                    title={link.name}
-                    className={`flex flex-col items-center justify-center p-6 rounded-3xl transition-all duration-300 ${
-                      link.highlight 
-                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-100' 
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    <div className="flex items-center justify-center">
-                      {link.icon}
-                    </div>
-                  </a>
-                ))}
+                {navLinks.map((link) => {
+                  const isActive = activeSection === link.id;
+                  return (
+                    <a 
+                      key={link.id}
+                      href={link.href} 
+                      onClick={() => setIsOpen(false)}
+                      title={link.name}
+                      className={`flex flex-col items-center justify-center p-6 rounded-3xl transition-all duration-300 transform active:scale-90 ${
+                        isActive 
+                        ? link.color === 'orange' ? 'bg-orange-500 text-white shadow-lg' :
+                          link.color === 'blue' ? 'bg-blue-600 text-white shadow-lg' :
+                          'bg-green-600 text-white shadow-lg'
+                        : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center">
+                        {link.icon}
+                      </div>
+                      {isActive && (
+                        <span className="mt-2 text-[8px] font-bold uppercase tracking-tighter opacity-80">{link.name}</span>
+                      )}
+                    </a>
+                  );
+                })}
               </div>
               
               <div className="h-px bg-gray-100 my-4 mx-2"></div>
